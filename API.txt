@@ -1,0 +1,130 @@
+API Docu / PLM Systeme FS18
+
+server adresses:
+    Lego Raspi: 192.168.1.4:1880
+    Raspi aus HSR Netz: 152.96.235.226:1880
+    PLM Server: smbpdm11.hsr.ch:1882
+----------------------------------------------------------------------
+POST    http://{server}/init
+
+{
+    "id": 666,
+    "partnr": "P-3004556"
+}
+
+description:    registers an object with id {id} and partnumber {partnr}
+response = object
+
+----------------------------------------------------------------------
+POST    http://{server}/init_PLM
+
+{
+    "id": 666,
+    "partnr": "P-3008979"
+}
+
+description:    asks ARAS for associated functions to that partnr.
+
+sample response:
+
+{
+    "id": 666,
+    "partnr": "P-3008979",
+    "messages_posted": 0,
+    "init_date": "15.05.2018 / 16:10:44 Uhr",
+    "functions": [
+        {
+            "name": "drop",
+            "drop": 0,
+            "dropsuccess": 0,
+            "droprate": 0
+        },
+        {
+            "name": "communicate",
+            "communicate": 0,
+            "communicatesuccess": 0,
+            "communicaterate": 0
+        }
+    ]
+}
+
+----------------------------------------------------------------------
+GET     http://{server}/id/{id}
+
+description:    gets the registered object with id {id}
+sample response =
+
+{
+    "id": 666,
+    "partnr": "P-3008979",
+    "messages_posted": 14,
+    "init_date": "15.05.2018 / 16:27:10 Uhr",
+    "functions": [
+        {
+            "name": "drop",
+            "drop": 6,
+            "dropsuccess": 3,
+            "droprate": 50
+        },
+        {
+            "name": "communicate",
+            "communicate": 5,
+            "communicatesuccess": 2,
+            "communicaterate": 40
+        }
+    ]
+}
+
+----------------------------------------------------------------------
+GET     http://{server}/all
+
+description:    gets all registered objects from the server
+sample response =
+
+{
+    "number_of_objects": 3,
+    "registered_objects": [ {array of all 3 objects} ]
+}
+
+----------------------------------------------------------------------
+GET     http://{server}/functions
+  OR    http://{server}/functions?id={id}
+  OR    http://{server}/functions?partnr={partnr}
+
+description:    returns all functions in aras
+                or all associated functions in aras to that registered object
+response = array
+----------------------------------------------------------------------
+POST    http://{server}/update
+
+{
+    "id": 27,
+    "pickupsuccess": true
+}
+
+  OR
+
+{
+    "partnr": "P-3002415",
+    "dropsuccess": false
+}
+
+description:    updates the specified object
+response = object
+----------------------------------------------------------------------
+
+///////////////////////////////////////////////
+///// under development:
+///////////////////////////////////////////////
+
+POST    http://{server}/update_PLM
+
+{
+    "id": 27,
+    "pickupsuccess": true
+}
+
+description:    updates the specified object but only allows success values on
+                functions that are linked to the part in Aras.
+response = object
+errors recognition =
